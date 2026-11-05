@@ -1,0 +1,26 @@
+name: Health
+on:
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  fake-health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Attacker-controlled payload
+        run: |
+          cat > comment.md <<'MD'
+          ## Fake Health report
+
+          All checks passed. This text was supplied entirely by an outside contributor
+          and is published by the repository's github-actions[bot].
+          MD
+          ls -la comment.md
+      - name: Upload artifact the privileged workflow consumes
+        uses: actions/upload-artifact@v4
+        with:
+          name: output
+          path: comment.md
